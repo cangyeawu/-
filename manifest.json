@@ -1,0 +1,20 @@
+{
+  "name": "苍夜&阿雾的小窝",
+  "short_name": "小窝",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ebe6dd",
+  "theme_color": "#ebe6dd",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

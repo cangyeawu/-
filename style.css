@@ -1,0 +1,835 @@
+/* v6.5 */
+
+/* === iPhone-safe-area & topbar sizing === */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --topbar-h: 64px;
+}
+.topbar{ padding-top: calc(12px + var(--safe-top)); }
+main{ padding-bottom: calc(12px + var(--safe-bottom)); }
+footer.footnote{ padding-bottom: calc(16px + var(--safe-bottom)); }
+
+:root{
+  --bg:#ebe6dd; --card:rgba(255,255,255,.75); --ink:#2b2f33; --muted:#6a6f76; --accent:#a4b6a6; --accent-ink:#1b1f24; --danger:#d47a85; --ok:#7ab39b; --grid:rgba(0,0,0,.06); --paper:#ffffffcc; --chat-font: inherit;
+  --bubble-left:#f7f4ee; --bubble-right:#cfc6de;
+}
+html[data-theme="mori-oat"]{ --bg:#ebe6dd; --card:rgba(255,255,255,.70); --accent:#a9a089; }
+html[data-theme="mori-green"]{ --bg:#e6ebe4; --card:rgba(255,255,255,.70); --accent:#a4b6a6; }
+html[data-theme="mori-blue"]{ --bg:#e6eaef; --card:rgba(255,255,255,.70); --accent:#a8b7c9; }
+html[data-theme="mori-pink"]{ --bg:#f0e7ea; --card:rgba(255,255,255,.70); --accent:#d6a7b0; }
+html[data-theme="mori-lilac"]{ --bg:#ece8f0; --card:rgba(255,255,255,.70); --accent:#b7a9cc; }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans SC, Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--ink); display:flex; flex-direction:column; }
+#grain{ position:fixed; inset:0; pointer-events:none; opacity:.22; mix-blend-mode:multiply; background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.4),transparent 40%),radial-gradient(circle at 80% 60%,rgba(255,255,255,.4),transparent 40%); z-index:0 }
+
+.topbar{ padding: calc(12px + var(--safe-top)) 12px 12px; border-bottom:1px solid var(--grid); position:sticky; top:0; backdrop-filter:saturate(140%) blur(10px); background:color-mix(in srgb, var(--bg), #fff 10%); z-index:5; }
+h1{margin:0;font-size:20px;letter-spacing:1px}
+.subtitle{color:var(--muted);margin-top:4px;font-size:12px}
+.tabs{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.tab{ background:transparent;border:1px solid var(--grid);color:var(--ink);padding:6px 10px;border-radius:10px;cursor:pointer; transition:transform .08s ease }
+.tab.active{background:rgba(0,0,0,.07);border-color:transparent; transform:translateY(-1px) }
+body.home-mode .tabs{ display:none }
+
+main{max-width:1120px;width:100%;margin:0 auto;padding:12px;flex:1; position:relative; z-index:2 }
+.panel{display:none}
+.panel.active{display:grid; grid-template-columns:1fr; gap:12px; animation:fade .2s ease}
+.panel.grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+@media (max-width:900px){.panel.grid{grid-template-columns:1fr}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+.glass{ backdrop-filter: blur(10px) saturate(130%); border:1px solid var(--grid) }
+.hero{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:56px 16px; background:var(--card); border:1px solid var(--grid); border-radius:18px; box-shadow:0 20px 40px rgba(0,0,0,.10) }
+.hero-title{ font-size:34px; letter-spacing:2px; font-weight:800; margin-bottom:10px }
+.hero-sub{ color:var(--muted); margin-bottom:20px }
+.hero-actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center }
+.pill{ border-radius:999px; padding:12px 18px }
+.hero-lines.split{ margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100% }
+.line{ background:rgba(255,255,255,.6); border:1px solid var(--grid); border-radius:12px; padding:10px; min-height:44px }
+
+.card{ background:var(--card); border:1px solid var(--grid); border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.10); overflow:hidden }
+.card.paper{ background:var(--paper); color:#2a2f34; border-color:#e3e6eb }
+.card.strong{ border:1px solid color-mix(in srgb, var(--accent), #000 10%); background: color-mix(in srgb, var(--bg), #fff 40%) }
+.card-head{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.45)); border-bottom:1px solid var(--grid) }
+.card-head h2{margin:0;font-size:16px}
+.card-body{ padding:12px; }
+.collapsible .chev{ width:28px; height:28px; border-radius:8px; background:rgba(255,255,255,.6); border:1px solid var(--grid); cursor:pointer; position:relative }
+.collapsible .chev::after{ content:''; position:absolute; inset:0; margin:auto; width:8px; height:8px; border-bottom:2px solid var(--ink); border-right:2px solid var(--ink); transform:rotate(45deg) translate(-1px,-1px); transition:transform .12s ease }
+.collapsible:not(.open) .chev::after{ transform:rotate(-135deg) translate(1px,1px) }
+.collapsible:not(.open) .card-body{ display:none }
+
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.row.wrap{flex-wrap:wrap}
+.row.compact{gap:6px;margin:6px 0}
+.row label{min-width:72px;color:var(--muted)}
+
+input[type="date"], input[type="time"], input[type="month"], input[type="search"], input[type="text"], input[type="url"], textarea, select{
+  background:rgba(255,255,255,.7);border:1px solid #e1e5ea;color:var(--ink);
+  padding:10px;border-radius:10px; outline:none; min-width:180px;
+}
+textarea{width:100%;resize:vertical}
+.muted{color:var(--muted)} .tiny{font-size:12px}
+.actions{display:flex;gap:10px}
+button{ background:rgba(255,255,255,.6);border:1px solid var(--grid);color:var(--ink); padding:10px 14px;border-radius:10px;cursor:pointer; transition: transform .05s ease, background .2s }
+button.primary{background:var(--accent);color: var(--accent-ink); border:none}
+button.danger{background:var(--danger);color:#fff;border:none}
+button.ghost{background:transparent;border:1px dashed var(--grid);}
+button:active{ transform: scale(.98) }
+button:disabled{opacity:.5;cursor:not-allowed}
+
+.list{display:grid;gap:8px}
+.item{ background:rgba(255,255,255,.7);border:1px solid #e1e5ea;border-radius:12px;padding:10px }
+.item .meta{color:var(--muted);font-size:12px}
+
+.viewer{ background:rgba(255,255,255,.7);border:1px solid #e1e5ea;border-radius:12px; overflow:hidden; margin-top:12px; }
+.viewer-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.6);border-bottom:1px solid #e1e5ea}
+.viewer-body{margin:0;padding:12px;white-space:pre-wrap;word-break:break-word;max-height:50vh;overflow:auto; font-family: var(--chat-font) }
+
+.chat-body{ max-height:none; min-height:420px; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:4px; background:#ffffff; font-family: var(--chat-font) }
+.msg{ display:flex; gap:8px; align-items:flex-start; max-width:66% }
+.msg.left{ flex-direction:row }
+.msg.right{ flex-direction:row; margin-left:auto }
+.avatar{ width:40px; height:40px; border-radius:6px; overflow:hidden; background:#ddd; flex:0 0 36px }
+.avatar img{ width:100%; height:100%; object-fit:cover }
+.bubble{ background:var(--bubble-left); border:1px solid #e1e5ea; padding:8px 10px; border-radius:12px; line-height:1.6; white-space:pre-wrap; word-break:break-word; color:#000 }
+.msg.right .bubble{ background:var(--bubble-right); color:#000 }
+.msg-head{ display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--muted); margin:0 44px 2px 44px; }
+.msg.left .msg-head{ justify-content:flex-start; gap:8px }
+.msg.right .msg-head{ justify-content:flex-end; gap:8px }
+.msg .name{ opacity:.9 } .msg .time{ opacity:.75 }
+
+.chat-layout{ display:grid; grid-template-columns: 280px 1fr; gap:12px; }
+.sidebar{ background:rgba(255,255,255,.7); border:1px solid #e1e5ea; border-radius:12px; overflow:auto; max-height:65vh; transition: transform .2s ease }
+.sidebar.open{ transform: translateX(0) }
+.sidebar.closed{ transform: translateX(-100%) }
+
+
+.calendar{ display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; padding:10px; border:1px dashed #d8dde5; border-radius:12px; background:rgba(255,255,255,.7); }
+.cell{ aspect-ratio:1; border:1px solid #e1e5ea; border-radius:10px; padding:6px; display:flex; align-items:flex-start; justify-content:flex-start; position:relative; }
+.cell .d{font-size:12px;color:var(--muted)}
+
+.swatches{ display:flex; gap:8px; }
+.swatch{ width:36px; height:24px; border-radius:8px; border:1px solid rgba(0,0,0,.08); cursor:pointer }
+.swatch.mori-oat{ background:#a9a089 }
+.swatch.mori-green{ background:#a4b6a6 }
+.swatch.mori-blue{ background:#a8b7c9 }
+.swatch.mori-pink{ background:#d6a7b0 }
+.swatch.mori-lilac{ background:#b7a9cc }
+
+.participant{ display:grid; grid-template-columns:64px 1fr 64px 1fr 64px auto; gap:10px; align-items:center; padding:12px; border:1px dashed #e1e5ea; border-radius:12px; background:rgba(255,255,255,.6); }
+.participant + .participant{ margin-top:10px }
+
+/* chat-view skin (only right pane) */
+.chat-view{ --viewer-bg: color-mix(in srgb, var(--bg), #fff 40%); }
+.chat-view.card{ background: var(--viewer-bg) !important; }
+
+.footnote{ padding:16px; text-align:center; color:var(--muted); border-top:1px solid #d8dde5 }
+/* v6.6 chat meta placement */
+\.meta-top,.meta-bottom{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1; }
+.bubble-col{ display:flex; flex-direction:column; gap:2px; max-width:100% }
+.msg.left .meta-top{ text-align:left; margin-left:calc(48px - 2ch) }
+.msg.left .meta-bottom{ text-align:right; margin-right:48px }
+.msg.right .meta-top{ text-align:right; margin-right:calc(48px - 2ch) }
+.msg.right .meta-bottom{ text-align:left; margin-left:48px }
+.chat-view .chat-body{ background: var(--viewer-bg); border-radius:12px; border:1px solid #e1e5ea }
+
+.msg .msg-head{ display:none !important }
+
+.msg{ margin-top:6px }
+.msg .bubble{ box-shadow: 0 1px 0 rgba(0,0,0,.05) }
+
+.participant input[type='text'], .participant input[type='url'], .participant select{ width:100% }
+.participant .p-avatar-file{ max-width:220px }
+
+/* Calendar heat */
+.cell .heat{ position:absolute; inset:0; border-radius:10px; background:transparent; }
+.cell .d{ position:relative; z-index:1 }
+
+.chips{ display:flex; gap:8px; flex-wrap:wrap }
+.chip{ border:1px solid #d8dde5; background:transparent; border-radius:999px; padding:6px 12px; cursor:pointer; transition:all .15s ease }
+.chip.on{ background:var(--accent); color:var(--accent-ink); border-color:transparent }
+
+.meta-top{ font-weight:700; font-size:15px }
+
+.msg.right{ margin-left:auto; align-self:flex-end }
+.msg.right .avatar{ margin-right:0 }
+
+.participant .p-save{ width:auto; padding:8px 12px; justify-self:end; margin-left:auto }
+
+.participant .p-preview{ grid-column: 1 / -1; padding-left:4px }
+
+@media (max-width:1200px){ #logs.logs3{ grid-template-columns: 1fr 1fr; } #logs.logs3 .card-participants{ grid-column: 1 / -1; grid-row:auto } }
+@media (max-width:900px){ #logs.logs3{ grid-template-columns: 1fr; } }
+
+.cell .heat{ pointer-events:none }
+
+@media (max-width:900px){
+  #logs.logs3{ grid-template-columns: 1fr; }
+  #logs.logs3 .card-upload{ grid-column: 1; }
+  #logs.logs3 .card-browse{ grid-column: 1; }
+  #logs.logs3 .card-style{ grid-column: 1; }
+  #logs.logs3 .card-json{ grid-column: 1; }
+  #logs.logs3 .card-participants{ grid-column: 1; }
+}
+
+/* v6.14 logs two-column with explicit rows */
+#logs.logs3{ grid-template-columns: 1fr 1fr; }
+#logs.logs3 .card-upload{ grid-column: 1; grid-row: 1; }
+#logs.logs3 .card-browse{ grid-column: 2; grid-row: 1; }
+#logs.logs3 .card-style{ grid-column: 1; grid-row: 2; }
+#logs.logs3 .card-json{ grid-column: 2; grid-row: 2; }
+#logs.logs3 .card-participants{ grid-column: 1 / -1; grid-row: 3; }
+@media (max-width:900px){
+  #logs.logs3{ grid-template-columns: 1fr; }
+  #logs.logs3 .card-upload,
+  #logs.logs3 .card-browse,
+  #logs.logs3 .card-style,
+  #logs.logs3 .card-json,
+  #logs.logs3 .card-participants{ grid-column: 1; grid-row: auto; }
+}
+
+
+/* --- enable text selection inside chat bubbles during clip mode --- */
+.select-mode .bubble, .select-mode .bubble *{
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
+
+/* --- fixed toolbar + content scroll layout --- */
+section.chat-view, .chat-view{
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-height: 85vh;
+  overflow: hidden;
+}
+.chat-view > .viewer-head{ grid-row: 1; }
+.chat-view > .chat-body{ grid-row: 2; overflow: auto; padding-bottom: 8px; }
+.chat-view > .clip-toolbar{ grid-row: 3; position: sticky; bottom: 0; z-index: 5; background: rgba(255,255,255,.92); border-top:1px solid #e1e5ea; }
+
+/* --- selected bubble border highlight --- */
+.msg.clip-checked .bubble{ border: 2px solid var(--accent) !important; }
+.bubble{ border: 1px solid #e6eaf0; border-radius: 12px; }
+
+/* --- Themes panel (two-pane) additions --- */
+.theme-view .viewer-head { position:sticky; top:0; z-index:2 }
+.theme-stage{ position:relative; height:100%; min-height:0; background:var(--viewer-bg); border-top:1px solid #e1e5ea; border-bottom:1px solid #e1e5ea; display:flex; align-items:stretch; }
+.clip-viewport{ flex:1; display:flex; align-items:stretch; justify-content:center; padding:12px; }
+.clip-content{ background:rgba(255,255,255,.7); border:1px solid #e1e5ea; border-radius:12px; width:min(760px,100%); height:100%; overflow:auto; padding:12px; }
+.nav-btn{ position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:999px; background:rgba(255,255,255,.85); border:1px solid var(--grid); cursor:pointer; }
+.nav-btn.left{ left:8px; }
+.nav-btn.right{ right:8px; }
+.nav-btn::after{ content:''; position:absolute; inset:0; width:10px; height:10px; margin:auto; border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(-45deg); }
+.nav-btn.left::after{ transform:rotate(135deg); }
+.theme-empty{ color:var(--muted); display:flex; align-items:center; justify-content:center; height:100%; }
+.theme-item-row{ display:flex; align-items:center; justify-content:space-between; gap:6px }
+.theme-item-row .left{ display:flex; align-items:center; gap:8px }
+.theme-item-row input.t-check{ width:16px; height:16px }
+.clip-content .line{ display:flex; gap:8px; margin-bottom:8px }
+.clip-content .line .who{ font-weight:600 }
+.theme-group-head{ display:flex; align-items:center; justify-content:space-between; gap:6px }
+.theme-group-head .actions{ display:flex; gap:6px }
+#themeList .group-block{ margin-bottom:10px }
+#themeList .group-title{ font-size:12px; color:var(--muted); margin-bottom:6px }
+.viewer-foot{ padding:8px 12px }
+.tiny.badge{ border:1px solid #d8dde5; padding:2px 6px; border-radius:999px; }
+.selecting .t-check{ display:inline-block !important; }
+
+
+/* --- Theme viewer adjustments (arrows & bubble visuals) --- */
+.theme-stage{ position:relative; display:block; height:100%; min-height:0; background:var(--viewer-bg); border-top:1px solid #e1e5ea; border-bottom:1px solid #e1e5ea; }
+.clip-viewport{ position:absolute; inset:0; z-index:1; display:flex; align-items:stretch; justify-content:center; padding:12px; }
+.nav-btn{ position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:999px; background:rgba(255,255,255,.92); border:1px solid var(--grid); cursor:pointer; z-index:3; }
+.theme-view .clip-content{ background:rgba(255,255,255,.7); border:1px solid #e1e5ea; border-radius:12px; width:min(760px,100%); height:100%; overflow:auto; padding:12px; }
+.theme-view .msg{ max-width:75% } /* bubble width = 3/4 of viewport */
+.theme-view .bubble{ background:#f7f4ee !important; } /* off-white bubble */
+.theme-view .clip-content .full-lines, .theme-view .clip-content .full-text{ padding:0; margin:0 }
+
+
+/* --- Safety: confine theme-stage & raise hero click priority --- */
+.theme-stage{ overflow:hidden; }
+.hero{ position:relative; z-index:5; }
+
+/* Calendar split layout */
+#calendar.calendar-split { grid-template-columns: 1fr 1fr; }
+#calendar .cal-left { display: grid; gap: 12px; align-content: start; }
+#calendar .cal-right { display: block; }
+@media (max-width: 900px){
+  #calendar.calendar-split { grid-template-columns: 1fr; }
+}
+
+/* --- Fixed height: preview exactly one list item, scroll for the rest --- */
+.list.preview-one {
+  /* Height tuned for one .item card (title + meta + buttons) */
+  max-height: 100px;
+  overflow: auto;
+  padding-right: 4px; /* avoid scrollbar overlay text */
+}
+
+/* Visual for passed countdown items */
+.item .ttl.passed { text-decoration: line-through; opacity: .75; }
+
+
+/* --- Period marker (black cat head) --- */
+.cell .period-mark{
+  position:absolute; right:4px; bottom:4px; width:36px; height:auto; border-radius:0;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08);
+}
+#periodToggle.primary{ filter: saturate(140%); }
+
+
+/* Footer cats overlay (global), stable sizing across Safari UI states & standalone */
+.footer-cats{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(0px + var(--safe-bottom));
+  width: 100vw;
+  height: auto;
+  pointer-events: none !important;
+  z-index: 10;
+  /* Fallback for older browsers */
+  max-height: 32vh;
+}
+/* Prefer svh (small viewport) to avoid bouncing size with Safari toolbars */
+@supports (height: 1svh){
+  .footer-cats{ max-height: 32svh; }
+}
+/* In standalone (A2HS), there is no browser toolbar; slightly reduce height */
+@media (display-mode: standalone){
+  .footer-cats{ max-height: 28dvh; }
+}
+
+
+
+
+.float-cat{
+  width:95px;
+  height:auto;
+}
+
+
+@media (max-width: 600px){
+  .float-cat{ width:64px; }
+}
+
+
+/* ===== Floating Cats (non-home pages) ===== */
+#floatCats{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:3;
+}
+.home-mode #floatCats{ display:none; }
+.float-cat{
+  position:absolute;
+  will-change: transform, opacity;
+  opacity:.9;
+  animation-name: catFloatY;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  width:95px;
+  height:auto;
+}
+@keyframes catFloatY {
+  0% { transform: translate3d(var(--x,0px), 100vh, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: .9; }
+  100% { transform: translate3d(calc(var(--x,0px) + var(--drift,0px)), -120px, 0) rotate(var(--rot, 0deg)); opacity: 0; }
+}
+@media (max-width: 600px){
+  .float-cat{ width:64px; }
+}
+@media (prefers-reduced-motion: reduce){
+  #floatCats{ display:none !important; }
+}
+
+
+/* Smaller action buttons under today's items */
+#todayList .item .actions button{ font-size:12px; padding:4px 8px; }
+#todayList .item .actions button.primary{ background:var(--accent); color: var(--accent-ink); border:none; }
+
+.groups-panel .muted{ font-size:10px; }
+
+body.sidebar-groups-mode .sidebar-top-actions{ display:none; }
+body:not(.sidebar-groups-mode) .sidebar-top-actions{ display:flex; }
+
+
+/* sticky top actions */
+.sidebar-top-actions{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 6px;
+  background: var(--card, #fff);
+  /* keep it clean; no border-bottom here to avoid double lines */
+}
+/* in groups mode hide this bar */
+body.sidebar-groups-mode .sidebar-top-actions{ display:none; }
+body:not(.sidebar-groups-mode) .sidebar-top-actions{ display:flex; }
+
+
+/* ungrouped header styling */
+.list .item .meta.ungrouped-head{
+  margin-top: 6px;       /* small gap from sticky button bar */
+  padding: 6px 0 8px;    /* tighten top/bottom */
+  border-bottom: 1px solid var(--grid, #e5e5e5); /* the only divider */
+}
+/* remove extra spacing below the header item */
+.list .item:has(.meta.ungrouped-head){
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+/* remove top margin from the first chat item right after the header */
+#allChatsList .item + .item{ margin-top: 0; }
+
+
+/* === Groups Panel (All Chats -> 所有分组) === */
+.groups-panel{ display:block; }
+.groups-panel .panel-head{ 
+  position:sticky; top:0; z-index: 5;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px; background:var(--card); border-bottom:1px solid var(--grid);
+}
+.groups-panel .group-item{
+  background:rgba(255,255,255,.70);
+  border:1px solid #e1e5ea;
+  border-radius:12px;
+  overflow:hidden;
+}
+.groups-panel .group-item + .group-item{ margin-top:10px; }
+.groups-panel .group-item.selected{ background: color-mix(in srgb, #000 6%, #fff 94%); } /* 半透明浅灰填充 */
+.groups-panel .group-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; gap:8px; 
+}
+.groups-panel .group-head .left{ display:flex; align-items:center; gap:8px; }
+.groups-panel .group-head .gname{ font-size:16px; font-weight:700; }
+.groups-panel .group-head .ops button{ font-size:12px; padding:6px 10px; }
+.groups-panel .fold{
+  width:22px; height:22px; border-radius:8px;
+  background:transparent; border:1px dashed var(--grid); cursor:pointer; position:relative;
+}
+.groups-panel .fold::after{
+  content:''; position:absolute; inset:0; margin:auto;
+  width:8px; height:8px;
+  border-right:2px solid var(--ink); border-bottom:2px solid var(--ink);
+  transform: rotate(45deg);
+  transition: transform .12s ease;
+}
+.groups-panel .group-item.collapsed .fold::after{ transform: rotate(-135deg); }
+.groups-panel .group-files{
+  border-top:1px dashed #e1e5ea;
+  padding:8px 12px 10px;
+  padding-left: calc(12px + 1ch); /* 比分组名称统一右移 1 个字符宽度 */
+}
+.groups-panel .group-files.hidden{ display:none; }
+.groups-panel .file-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 8px; border:1px solid rgba(0,0,0,.06); border-radius:10px;
+  background:rgba(255,255,255,.6);
+}
+.groups-panel .file-row + .file-row{ margin-top:6px; }
+.groups-panel .file-row .fname{ font-size:14px; font-weight:600; } /* 小一号 */
+.groups-panel .file-row .actions button{ font-size:12px; padding:6px 10px; }
+
+/* === v10: JSON converter preview ('导入这一条/已导入') buttons size === */
+#jsonPreview.list .item .actions button,
+#jsonPreview .list .item .actions button,
+#jsonPreview .actions button{
+  font-size: 11px;
+  padding: 4px 8px;
+  line-height: 1.2;
+}
+
+/* === v10: Text Converter (JSON preview) action buttons size === */
+#jsonConv #jsonPreview.list .item .actions button,
+#jsonConv #jsonPreview .item .actions button{
+  font-size: 11px;
+  padding: 4px 8px;
+  line-height: 1.2;
+}
+
+/* === v11: Unify action buttons size + theme-colored delete, Search/Browse & All Chats === */
+#fileList.list .item .actions button,
+#fileList .list .item .actions button,
+#allChatsList .item .actions button{
+  font-size: 11px !important;
+  padding: 4px 8px !important;
+  line-height: 1.2 !important;
+}
+
+/* Delete buttons follow theme accent across both areas */
+#fileList .item .actions button.danger,
+#allChatsList .item .actions button.danger{
+  background: var(--accent) !important;
+  color: var(--accent-ink, #1b1f24) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#fileList .item .actions button.danger:hover,
+#allChatsList .item .actions button.danger:hover{ filter: brightness(.95); }
+
+
+/* vMusic: keep music list scrolling within the same card height */
+#musicList{ overflow-y:auto; max-height: 220px; }
+
+
+/* v avatar-row: keep label+file+url on same line, but the group occupies its own row */
+.avatar-row{ align-items:center; gap:8px; }
+
+/* v avatar-row fix: keep 头像+文件选择+URL 同行，整体占第二行 */
+.row.avatar-row{ flex-wrap: nowrap; align-items:center; gap:8px; }
+.row.avatar-row label{ min-width:72px; }
+.row.avatar-row .p-avatar-file{ flex:0 0 auto; width:auto; }
+.row.avatar-row .p-avatar-url{ flex:1; min-width:160px; }
+
+/* v participant save button bottom-right on its own row */
+.participant .p-preview{ grid-column: 1 / -1; }
+.participant .p-save{ grid-column: 1 / -1; justify-self: end; align-self: end; margin-top:8px; }
+
+
+
+/* === v12: Participants layout & input widths (阿雾 / 苍夜) === */
+/* Two equal columns for 阿雾 & 苍夜 blocks; 苍夜在右、阿雾在左（HTML 顺序自然排布） */
+#participantsCard .card-body > .row.wrap{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 900px){
+  #participantsCard .card-body > .row.wrap{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Narrow the grid columns inside each participant to keep name/url shorter */
+.participant{
+  grid-template-columns: 64px minmax(140px, 200px) 64px minmax(100px, 160px) 64px 1fr;
+}
+@media (max-width: 600px){
+  .participant{
+    grid-template-columns: 64px 1fr 64px 1fr 64px auto;
+  }
+}
+
+/* Name input: reasonably narrow */
+.participant .p-name{
+  width: 100%;
+  max-width: 180px;
+}
+
+/* URL input stays on the same line (to the right of file button) but is narrower */
+#participantsCard .avatar-row .p-avatar-url{
+  flex: 0 0 220px;
+  max-width: 220px;
+}
+
+/* Ensure both participant blocks look identical and occupy equal space */
+#participantsCard .participant{
+  background: rgba(255,255,255,.6);
+  border: 1px dashed #e1e5ea;
+  border-radius: 12px;
+}
+
+
+/* v13: Theme sidebar item layout (two lines) + button sizing and theme-colored delete */
+#themeList .item .theme-item-row{ display:flex; flex-direction:column; gap:6px; }
+#themeList .item .name-line{ display:flex; align-items:center; gap:8px; }
+#themeList .item .actions{ justify-content:flex-start; }
+
+/* Buttons 11px */
+#themeList .item .actions button{
+  font-size:11px !important;
+  padding:4px 8px !important;
+  line-height:1.2 !important;
+}
+
+/* Delete button follows current theme accent color */
+#themeList .item .actions button.danger{
+  background: var(--accent) !important;
+  color: var(--accent-ink, #1b1f24) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#themeList .item .actions button.danger:hover{ filter: brightness(.95); }
+
+
+/* vAnnivCountdownButtons: 11px action buttons + theme-colored delete */
+#annivList .item .actions button,
+#countdownList .item .actions button{
+  font-size: 11px !important;
+  padding: 4px 8px !important;
+  line-height: 1.2 !important;
+}
+#annivList .item .actions button.danger,
+#countdownList .item .actions button.danger{
+  background: var(--accent) !important;
+  color: var(--accent-ink, #1b1f24) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#annivList .item .actions button.danger:hover,
+#countdownList .item .actions button.danger:hover{
+  filter: brightness(.95);
+}
+
+
+/* v6.15: Today's records list scroll to keep card height stable */
+#todayList{
+  max-height: 300px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+/* v6.15: Fix right-pane chat-view height so card doesn't grow when opening a file */
+.chat-layout .chat-view{
+  height: 65vh;
+}
+
+
+/* mobile shorter url */
+@media (max-width: 600px){
+  #participantsCard .avatar-row .p-avatar-url{ flex:0 0 180px; max-width:180px; }
+}
+
+
+/* === Mobile left drawer behavior (iPhone 14 Pro friendly) === */
+@media (max-width: 900px){
+  .chat-layout{ grid-template-columns: 1fr; }
+  .sidebar{
+    position: fixed;
+    top: calc(var(--topbar-h) + var(--safe-top) + 8px);
+    bottom: calc(8px + var(--safe-bottom));
+    left: 0;
+    width: min(86vw, 320px);
+    max-width: 86vw;
+    right: auto;
+    z-index: 30;
+    transform: translateX(-105%);
+    transition: transform .25s ease;
+    border-radius: 12px;
+  }
+  .sidebar.open{ transform: translateX(0); }
+  .sidebar.closed{ transform: translateX(-105%); }
+}
+
+
+/* === iPhone 14 Pro typography & spacing tuning === */
+@media (max-width: 430px){
+  .hero{ padding: 36px 14px; }
+  .hero-title{ font-size: 28px; letter-spacing: 1px; }
+  .hero-sub{ font-size: 14px; }
+  .row{ margin: 6px 0; }
+  .card-head h2{ font-size: 15px; }
+  button{ padding: 9px 12px; }
+}
+
+
+/* Avoid top overlap for fixed header in chat-view on mobile */
+@media (max-width: 900px){
+  .chat-view.card{ padding-top: 0; }
+  .viewer-head{ position: sticky; top: 0; z-index: 4; }
+}
+
+
+/* === Participant inputs (iPhone): keep inputs readable & slightly wider === */
+@media (max-width: 430px){
+  .participant .p-name{ max-width: 220px; }
+  #participantsCard .avatar-row .p-avatar-url{ max-width: 240px; flex: 0 0 240px; }
+}
+
+
+/* === On small screens: place JSON converter before Participants ("我们" at the bottom) === */
+@media (max-width: 430px){
+  #logs.logs3{ display: grid; grid-template-columns: 1fr; }
+  #logs.logs3 .card-upload{ grid-row: 1; }
+  #logs.logs3 .card-browse{ grid-row: 2; } /* this is the 音乐卡 */
+  #logs.logs3 .card-style{ grid-row: 3; }
+  #logs.logs3 .card-json{ grid-row: 4 !important; }
+  #logs.logs3 .card-participants{ grid-row: 5 !important; }
+}
+
+
+@media (max-width: 430px){
+  .hero-actions{ gap: 8px; }
+  .hero-lines.split{ gap: 8px; }
+  .line{ min-height: 40px; padding: 8px; }
+}
+
+
+@media (min-width: 901px){
+  .chat-layout .sidebar{
+    height: 65vh;
+  }
+}
+
+/* v13-hero-click */
+.hero{ position:relative; z-index:2; }
+
+
+/* Bold border for days with notes (from '记录今天' 备注) */
+.cell.note-strong{ border: 2px solid var(--accent); }
+
+/* Day notes dialog basic layout */
+.day-dialog::backdrop{ background: rgba(0,0,0,.25); }
+.day-dialog{ border: none; border-radius: 14px; padding: 0; max-width: 720px; width: min(92vw, 720px); }
+
+
+/* v6.16 calendar day bubble dialog list styles */
+.day-dialog .list .item .note{ white-space: pre-wrap; word-break: break-word; }
+.day-dialog .list .item .actions button{ font-size: 12px; padding: 4px 8px; }
+
+/* === Day notes popover === */
+.day-popover{
+  position:absolute; z-index:9999;
+  min-width: 240px; max-width: 320px;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--grid);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  padding: 10px 12px;
+}
+.day-popover::after{
+  content:'';
+  position:absolute;
+  width:10px; height:10px;
+  background: var(--card);
+  border-left:1px solid var(--grid);
+  border-top:1px solid var(--grid);
+  transform: rotate(45deg);
+  left: calc(var(--arrow-x, 50%) - 5px);
+}
+.day-popover[data-pos="above"]::after{ bottom:-6px; }
+.day-popover[data-pos="below"]::after{ top:-6px; transform: rotate(225deg); }
+.day-popover .head{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.day-popover .head .title{ font-weight:600; }
+.day-popover .head .date{ opacity:.8; font-size:12px; }
+.day-popover .body{ max-height: 40vh; overflow:auto; }
+.day-popover .day-item{ padding:8px 0; border-top:1px dashed var(--grid); }
+.day-popover .day-item:first-child{ border-top:0; }
+.day-popover .day-item .meta{ font-size:12px; opacity:.85; margin-bottom:4px; }
+.day-popover .day-item .note{ white-space:pre-wrap; line-height:1.45; }
+
+
+/* === vReorder: Clips reorder dialog & drag visuals === */
+.reorder-dialog::backdrop{ background: rgba(0,0,0,.25); }
+.reorder-dialog{ border: none; border-radius: 14px; padding: 0; width: min(92vw, 680px); }
+.reorder-body{ padding: 12px; background: var(--card); border: 1px solid var(--grid); border-radius: 14px; }
+.reorder-body h3{ margin: 0 0 8px 0; font-size: 16px; }
+.reorder-thumbs{ display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 8px; max-height: 50vh; overflow: auto; padding-right: 4px; }
+.clip-thumb{ background: rgba(255,255,255,.75); border: 1px solid #e1e5ea; border-radius: 10px; padding: 8px; cursor: grab; }
+.clip-thumb:active{ cursor: grabbing; }
+.clip-thumb .idx{ font-weight: 700; font-size: 12px; color: var(--muted); display:block; margin-bottom:4px; }
+.clip-thumb .prev{ font-size: 12px; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clip-thumb.dragging{ opacity: .6; }
+.clip-thumb.over{ outline: 2px dashed var(--accent); }
+#themeList .item.drop-target{ outline: 2px dashed var(--accent); outline-offset: 2px; }
+.move-dialog::backdrop{ background: rgba(0,0,0,.25); }
+.move-dialog{ border:none; border-radius: 14px; padding: 0; width: min(92vw, 520px); }
+.move-body{ padding: 12px; background: var(--card); border: 1px solid var(--grid); border-radius: 14px; }
+.move-body h3{ margin: 0 0 8px 0; font-size: 16px; }
+.move-list{ display: grid; gap: 8px; max-height: 50vh; overflow: auto; }
+.move-list .item{ cursor: pointer; }
+.move-list .item:hover{ filter: brightness(.98); }
+
+
+.chat-layout.sidebar-closed .sidebar{
+    display: none;
+  }
+}
+
+
+
+/* Show footer cats on all pages except 小窝布置(#logs) */
+
+
+
+/* Hide footer cats only on 小窝布置(panel #logs) */
+body[data-tab="logs"] .footer-cats{ display:none !important; }
+
+
+/* === v31 mobile/desktop drawer alignment fixes === */
+/* On mobile, remove artificial max-height so sidebar can align to viewer top/bottom without looking shortened */
+@media (max-width: 900px){
+  .chat-layout .sidebar{
+    max-height: none !important;
+  }
+}
+
+/* On desktop / wider screens, keep sidebar clear of the sticky topbar */
+@media (min-width: 901px){
+  .chat-layout{
+    align-items: start;
+  }
+  .chat-layout .sidebar{
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--safe-top) + 16px);
+    align-self: start;
+    max-height: calc(100vh - var(--topbar-h) - var(--safe-top) - 32px);
+  }
+}
+
+/* theme-colored delete in Clips (剪藏) sidebar / controls */
+#clips #themeSidebar button[data-act="delete"],
+#clips .actions button[data-act="delete"]{
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* === Fix: themed delete buttons for Clips === */
+#clips button.danger,
+#clips [data-act="delete"],
+#clips [data-act="del-clip"],
+#clips #deleteThemeBtn{
+  background: var(--accent) !important;
+  color: var(--accent-ink, #1b1f24) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#clips button.danger:hover,
+#clips [data-act="delete"]:hover,
+#clips [data-act="del-clip"]:hover,
+#clips #deleteThemeBtn:hover{
+  filter: brightness(.95);
+}
+
+/* === Music list scroll === */
+#musicList{
+  max-height: 200px;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.06);
+  padding: 6px;
+}
+@media (max-width: 430px){
+  #musicList{ max-height: 160px; }
+}
+#musicList .item{
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(0,0,0,.04);
+  margin-bottom: 6px;
+}
+
+
+/* === backup card layout under 小窝布置 === */
+#logs.logs3 .card-backup{
+  grid-column: 1 / -1; 
+  grid-row: 4;
+}
+@media (max-width: 900px){
+  #logs.logs3 .card-backup{
+    grid-column: 1;
+    grid-row: 6 !important; /* after participants on mobile */
+  }
+}
+

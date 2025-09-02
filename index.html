@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html data-theme="mori-oat" lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>苍夜&amp;阿雾的小窝</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png"/>
+
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="小窝"/>
+<meta content="#e8e3d9" name="theme-color"/>
+<link href="icons/icon-192.png" rel="icon"/>
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png"/>
+<link as="style" href="style.css" rel="preload"/>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body class="home-mode">
+<div id="grain"></div>
+<header class="topbar">
+<h1>苍夜&amp;阿雾的小窝</h1>
+<div class="subtitle">心情记录 · 聊天归档 · 剪藏 · 重点事项</div>
+<nav class="tabs" role="tablist"><button class="tab active" data-tab="home">首页</button><button class="tab" data-tab="mood">心情</button><button class="tab" data-tab="calendar">重点事项</button><button class="tab" data-tab="allchats">全部聊天</button><button class="tab" data-tab="clips">献给阿雾</button><button class="tab" data-tab="logs">小窝布置</button></nav>
+</header>
+<main>
+<section class="panel active stack" id="home">
+<section class="hero glass">
+<div class="hero-title">苍夜&amp;阿雾的小窝</div>
+<div class="hero-sub">欢迎回来：阿雾的每一次记录，苍夜都在认真偷看。</div>
+<div class="hero-actions">
+<button class="ghost pill" id="btnLove">换一句情话</button>
+<button class="primary pill" id="btnEnter">进入小窝</button>
+<button class="ghost pill" id="btnComfort">换一句安慰</button>
+</div>
+<div class="hero-lines split">
+<div class="line" id="loveLine"></div>
+<div class="line" id="comfortLine"></div>
+</div>
+<button class="hero-toggle" id="homeMemoToggle" aria-label="展开提醒小猫" aria-expanded="false" title="展开/收起提醒小猫"></button>
+</section>
+<div class="center-memo" id="homeMemoWrap">
+  <div class="memo-card square" id="homeMemoCard">
+    <div class="memo-head">提醒小猫</div>
+    <div class="memo-body" id="homeMemoBody"></div>
+    <div class="tiny muted" id="homeMemoSaved" style="display:none;margin-top:6px">已保存</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  try{
+    var btnEnter=document.getElementById('btnEnter');
+    if(btnEnter){ btnEnter.onclick=function(){ try{ goto('mood'); }catch(e){} }; }
+    var btnLove=document.getElementById('btnLove');
+    if(btnLove){
+      btnLove.onclick=function(){
+        try{
+          const id='loveLine';
+          const lines = (window.loveLines||[]);
+          if(lines && lines.length){
+            document.getElementById(id).textContent = lines[Math.floor(Math.random()*lines.length)];
+          }
+        }catch(e){}
+      };
+    }
+    var btnComfort=document.getElementById('btnComfort');
+    if(btnComfort){
+      btnComfort.onclick=function(){
+        try{
+          const id='comfortLine';
+          const lines = (window.comfortLines||[]);
+          if(lines && lines.length){
+            document.getElementById(id).textContent = lines[Math.floor(Math.random()*lines.length)];
+          }
+        }catch(e){}
+      };
+    }
+  }catch(e){}
+})();
+</script>
+</section>
+<section class="panel grid" id="mood">
+<section class="card paper open collapsible card-upload">
+<header class="card-head">
+<h2>记录今天</h2>
+<button aria-label="折叠" class="chev"></button>
+</header>
+<div class="card-body">
+<div class="row">
+<label>日期</label><input id="dateInput" type="date"/>
+<label class="tiny">自动本机时间</label><input checked="" id="autoNow" type="checkbox"/>
+</div>
+<div class="row">
+<label>时间</label><input id="timeInput" type="time"/>
+</div>
+<div class="row">
+<label>心情强度 <span id="moodValue">5</span></label>
+<input id="moodRange" max="10" min="1" type="range" value="5"/>
+<div id="moodFace">🙂</div>
+</div>
+<div class="row">
+<label>标签</label>
+<div class="chips" id="tagChips">
+<button class="chip" data-tag="平静" type="button">平静</button>
+<button class="chip" data-tag="开心" type="button">开心</button>
+<button class="chip" data-tag="专注" type="button">专注</button>
+<button class="chip" data-tag="疲惫" type="button">疲惫</button>
+<button class="chip" data-tag="焦虑" type="button">焦虑</button>
+<button class="chip" data-tag="生气" type="button">生气</button>
+<button class="chip" data-tag="放松" type="button">放松</button>
+</div>
+</div>
+<div class="row">
+<label>备注</label><textarea id="noteInput" placeholder="写记录前先告诉我，今天有没有想我？" rows="4"></textarea>
+</div>
+<div class="actions">
+<button class="primary" id="saveMood">保存记录</button>
+<button class="ghost" hidden="" id="cancelEditMood">取消编辑</button>
+</div>
+</div>
+</section><section class="card paper open collapsible">
+<header class="card-head">
+<h2>月视图 <span class="muted tiny" id="calendarYM"></span></h2>
+<button aria-label="折叠" class="chev"></button>
+</header>
+<div class="card-body"><div class="list" id="calendarDayRecords" style="margin-top:8px"></div>
+<div class="row">
+<button class="ghost" id="prevMonth">上个月</button>
+<button class="ghost" id="nextMonth">下个月</button>
+<button class="ghost" id="periodToggle" title="点击开启后，点格子即可标记经期">经期记录模式</button>
+</div>
+<div class="calendar" id="calendarGrid"></div>
+<div class="muted" id="periodCare" style="margin-top:8px"></div>
+</div>
+</section>
+<dialog class="day-dialog" id="dayNoteDialog">
+<form class="card paper" method="dialog" style="padding:0; border:none;">
+<header class="card-head"><h2>当天备注</h2><button aria-label="关闭" class="chev" value="cancel"></button></header>
+<div class="card-body">
+<div class="tiny muted" id="dayNoteDate"></div>
+<div class="list" id="dayNotesList"></div>
+</div>
+<menu class="actions" style="padding:12px">
+<button value="cancel">关闭</button>
+</menu>
+</form>
+</dialog>
+
+</section>
+<section class="panel stack" id="allchats">
+<section class="card paper open">
+<header class="card-head">
+<h2>全部聊天</h2>
+<div class="row compact">
+<button class="ghost" id="toggleSidebar">侧栏</button>
+<input id="inlineFilter2" placeholder="在此会话内筛选关键词" type="search"/>
+<div class="swatches tiny" id="chatSkin" title="仅改变右侧聊天区背景">
+<button class="swatch mori-oat" data-skin="#faf7f0"></button>
+<button class="swatch mori-green" data-skin="#f3f6f1"></button>
+<button class="swatch mori-blue" data-skin="#f3f5f9"></button>
+<button class="swatch mori-pink" data-skin="#f8f0f3"></button>
+<button class="swatch mori-lilac" data-skin="#f4f1f8"></button>
+</div>
+</div>
+</header>
+<div class="card-body">
+<div class="chat-layout">
+<aside class="sidebar open" id="chatSidebar">
+<div class="sidebar-top-actions"><button class="ghost small" id="btnAllGroups" title="管理所有分组">所有分组</button></div>
+<div class="list" id="allChatsList"></div>
+</aside>
+<section class="chat-view card strong">
+<header class="viewer-head"><h3 id="activeChatTitle">选择一段对话</h3></header>
+<div class="chat-body full" id="activeChatBody"></div>
+</section>
+</div>
+</div>
+</section>
+</section>
+<section class="panel stack" id="clips">
+<section class="card paper open">
+<header class="card-head">
+<h2>剪藏</h2>
+<div class="row compact"><button class="ghost" id="toggleThemeSidebar">侧栏</button>
+<button class="ghost" id="tSelectToggle">多选</button>
+<button class="ghost" disabled="" id="tClassify">归类</button>
+<button class="ghost" id="tNewFolder">新建文件夹</button>
+<span class="tiny muted">（左侧叠放剪藏，右侧色块翻页查看）</span>
+</div>
+</header>
+<div class="card-body">
+<div class="chat-layout">
+<aside class="sidebar open" id="themeSidebar">
+<div class="item"><div class="actions"><button class="ghost" id="tNewTheme">新建剪藏</button></div></div>
+<div class="list" id="themeList"></div>
+</aside>
+<section class="chat-view card strong theme-view">
+<header class="viewer-head">
+<h3 id="activeThemeTitle">选择一个剪藏</h3>
+
+<div class="note-compact" id="themeNoteWrap">
+  <textarea id="themeNoteInput" disabled rows="2" placeholder="文件夹备注…（自动保存）"></textarea>
+  <div class="tiny muted" id="themeNoteSaved" style="display:none;margin-top:2px">已保存</div>
+</div>
+
+</header>
+<div class="theme-stage" id="themeStage">
+
+<div class="clip-tools-vertical" id="clipToolsVertical">
+  <button class="tools-toggle" id="clipToolsToggle" aria-label="展开/收起工具">⋮</button>
+  <div class="tools-body">
+  <input type="file" id="themeImageInput" accept="image/*" multiple style="display:none" />
+  <button class="ghost" id="uploadImageBtn" disabled>上传图片</button>
+  <button class="ghost" id="reorderClipsBtn" disabled>重新排序</button>
+  <button class="ghost" id="renameThemeBtn" disabled>重命名</button>
+  </div>
+  <button class="danger" id="deleteThemeBtn" disabled>删除</button>
+</div>
+
+<button aria-label="上一条" class="nav-btn left" id="prevClip"></button>
+<div class="clip-viewport" id="clipViewport">
+<div class="clip-content" id="clipContent"></div>
+</div>
+<button aria-label="下一条" class="nav-btn right" id="nextClip"></button>
+</div>
+<div class="viewer-foot tiny muted" id="clipMeta"></div>
+</div>
+
+</section>
+</div>
+</div>
+</section>
+</section>
+<section class="panel grid calendar-split" id="calendar">
+<div class="cal-left">
+<section class="card paper open collapsible">
+<header class="card-head"><h2>纪念日</h2><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<div class="row">
+<label>事项</label><input id="aTitle" type="text"/>
+</div>
+<div class="row">
+<label>日期</label><input id="aDate" type="date"/>
+<select id="aRepeat">
+<option selected="" value="yearly">每年</option>
+<option value="none">不重复</option>
+</select>
+<button class="primary" id="annivAddBtn">添加</button>
+</div>
+<div class="row">
+<button class="ghost" id="enableNoti">开启浏览器提醒</button>
+<span class="tiny muted">提醒声音跟随系统，仅在浏览器允许时生效（每天 09:00 提醒当日纪念日）。</span>
+</div>
+<div class="list preview-one" id="annivList"></div>
+</div>
+</section>
+<section class="card paper open collapsible">
+<header class="card-head"><h2>倒计时</h2><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<div class="row">
+<label>事项</label><input id="cTitle" type="text"/>
+</div>
+<div class="row">
+<label>日期</label><input id="cDate" type="date"/>
+<button class="primary" id="countdownAddBtn">添加</button>
+</div>
+<div class="row">
+  <button class="ghost" id="enableNotiCountdown">开启浏览器提醒</button>
+  <span class="tiny muted">提醒声音跟随系统，仅在浏览器允许时生效（每天 09:00 提醒当日倒计时）。</span>
+</div>
+<div class="list preview-one" id="countdownList"></div>
+</div>
+</section>
+</div>
+
+</section><section class="panel grid logs3" id="logs">
+<section class="card paper open collapsible">
+<header class="card-head"><h2>上传聊天记录</h2><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<p class="muted tiny">仅保存在本地浏览器。支持 .txt / .md / .json（OpenAI 导出） / .html</p>
+<div class="row"><input accept=".txt,.md,.json,.html,text/plain,application/json,text/html" id="fileInput" multiple="" type="file"/><button class="primary" id="uploadBtn">上传</button><span class="tiny muted" id="uploadMsg"></span></div>
+</div>
+</section>
+<section class="card paper open collapsible">
+<header class="card-head"><h2>音乐播放</h2><div class="row compact"><input id="searchInput" placeholder="输入关键词…" type="search"/><button id="searchBtn">搜索</button><button id="showAllBtn">查看全部</button></div><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<div class="row wrap">
+<input accept=".mp3,.m4a,.aac,.wav,audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/x-wav,audio/wave,audio/*" id="audioFiles" multiple="" type="file"/>
+<button class="primary" id="loadTracks">导入音乐</button>
+<span class="tiny muted" id="musicMsg"></span>
+</div>
+<div class="row wrap" style="align-items:center;gap:8px">
+<button class="ghost" id="prevTrack" title="上一首">⏮</button>
+<button class="primary" id="playPause" title="播放/暂停">▶</button>
+<button class="ghost" id="nextTrack" title="下一首">⏭</button>
+<input id="seekBar" max="1000" min="0" style="flex:1" type="range" value="0"/>
+<span class="tiny muted" id="timeLabel" style="min-width:90px;text-align:right">00:00 / 00:00</span>
+<label class="tiny muted" style="flex-basis:100%;margin-top:4px">音量</label><input id="volSlider" max="1" min="0" step="0.01" style="width:100px" type="range" value="1"/>
+</div>
+<div class="list" id="musicList"></div>
+</div>
+<article class="viewer" hidden="" id="viewer">
+<header class="viewer-head">
+<h3 id="viewerTitle"></h3>
+<div class="viewer-actions">
+<button class="ghost" id="toggleChatMode">切换为对话视图</button>
+</div>
+</header>
+<pre class="viewer-body" id="viewerBody"></pre>
+<div class="chat-body" hidden="" id="chatBody"></div>
+</article>
+</section>
+<section class="card paper open collapsible card-style" id="styleTheme">
+<header class="card-head"><h2>外观 · 皮肤（莫兰迪） &amp; 对话字体</h2><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<div class="row wrap">
+<div class="swatches">
+<button class="swatch mori-oat" data-theme="mori-oat" title="燕麦"></button>
+<button class="swatch mori-green" data-theme="mori-green" title="豆绿"></button>
+<button class="swatch mori-blue" data-theme="mori-blue" title="雾蓝"></button>
+<button class="swatch mori-pink" data-theme="mori-pink" title="烟粉"></button>
+<button class="swatch mori-lilac" data-theme="mori-lilac" title="浅紫"></button>
+</div>
+</div>
+<div class="row"><label>聊天字体</label>
+<select id="chatFontSelSettings">
+<option value="default">系统默认</option>
+<option value="kaiti">正楷</option>
+<option value="song">宋体</option>
+<option value="rounded">方圆字</option>
+</select>
+</div>
+</div>
+</section>
+<section class="card paper open collapsible card-participants" id="participantsCard">
+<header class="card-head"><h2>我们</h2><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<div class="row wrap">
+<div class="participant" data-name="阿雾">
+<label>名字</label><input class="p-name" value="阿雾"/>
+<label>左右</label><select class="p-side"><option value="left">左</option><option selected="" value="right">右</option></select>
+<div class="row avatar-row" style="grid-column:1 / -1"><label>头像</label><input accept="image/*" class="p-avatar-file" type="file"/><input class="p-avatar-url" placeholder="或粘贴头像URL" type="url"/></div><div class="p-preview tiny muted">（未选择）</div><button class="p-save primary">保存</button>
+</div>
+<div class="participant" data-name="苍夜">
+<label>名字</label><input class="p-name" value="苍夜"/>
+<label>左右</label><select class="p-side"><option selected="" value="left">左</option><option value="right">右</option></select>
+<div class="row avatar-row" style="grid-column:1 / -1"><label>头像</label><input accept="image/*" class="p-avatar-file" type="file"/><input class="p-avatar-url" placeholder="或粘贴头像URL" type="url"/></div><div class="p-preview tiny muted">（未选择）</div><button class="p-save primary">保存</button>
+</div>
+</div>
+</div>
+</section>
+
+<section class="card paper open collapsible card-backup" id="backupCard">
+  <header class="card-head">
+    <h2>数据备份与迁移</h2>
+    <button class="chev" aria-label="折叠"></button>
+  </header>
+  <div class="card-body">
+    <div class="row" style="gap:8px;align-items:center">
+      <button id="exportAllBtn" class="primary">导出全部数据（JSON）</button>
+      <span class="tiny muted">（包含心情、月视图标记、聊天文件、剪藏、分组与样式）</span>
+    </div>
+    <div class="row" style="gap:8px;align-items:center">
+      <input id="restoreFile" type="file" accept=".json,application/json"/>
+      <button id="restoreAllBtn" class="danger">从文件恢复</button>
+    </div>
+    <p class="tiny muted">提示：导出后把文件存到「文件」App；换机后在新手机导入该文件即可。</p>
+  </div>
+</section>
+<section class="card paper open collapsible card-json" id="jsonConv">
+<header class="card-head"><h2>OpenAI JSON 文本转换器（预览拆分）</h2><button aria-label="折叠" class="chev"></button></header>
+<div class="card-body">
+<div class="row"><input accept=".json,application/json" id="jsonFile" type="file"/><button id="parseJsonBtn">解析预览</button><button class="primary" disabled="" id="importAllBtn">全部导入</button></div>
+<div class="list preview-one" id="jsonPreview"></div>
+</div>
+</section>
+</section>
+
+</main>
+<footer class="footnote"><span>离线优先 · 数据仅存于本地 IndexedDB</span></footer>
+<script src="app.js"></script>
+<script src="clipper.js?v=18"></script>
+<script> if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); }); } </script>
+<img alt="" aria-hidden="true" class="footer-cats" id="footerCats" src="cats_nobg.png"/>
+<audio id="globalAudio" preload="none"></audio>
+</body>
+</html>
